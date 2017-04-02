@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class SocketServer {
  
-   private int port;
+    private int port;
     private final ArrayList<Client> clients;
     private ServerSocket serverSocket;
 

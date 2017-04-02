@@ -7,7 +7,7 @@ package projekt;
 
 /**
  *
- * @author student
+ * @author VLC0070
  */
 public class Main {
 
@@ -33,13 +33,13 @@ public class Main {
         
         GPIO ledOnOff = new GPIO(66);           
         ledOnOff.exportPin();
-        ledOnOff.setDirection(GPIO.GPIO_DIRECTION.OUT);
+        ledOnOff.setDirection(GPIO.GPIO_DIRECTION.OUT); //Nastaveni smeru pinu na vystup - blikani 
         
         LED zapinaniLed = new LED(LED.LED0_PATH);            
         zapinaniLed.setDelayOff(1000);
         zapinaniLed.setDelayOn(1000);
         
-        ADC potenciometr = new ADC(0);         //provest jenom jednou??
+        ADC potenciometr = new ADC(0);         //provest jenom jednou?
         potenciometr.adcInit();
         valuePot = (potenciometr.getVoltage());
          
@@ -47,7 +47,8 @@ public class Main {
         pwmPot.enablePWM();
         pwmPot.enablePin();
         pwmPot.setRun(0);
-        pwmPot.setPolarity(0);        
+        pwmPot.setPolarity(0);  
+        
         
         while (stavOnOff == false){
             onOffButton.waitForValue(1, 50); // Cekani na nabeznou hranu Zapnutí vypnutí
@@ -98,9 +99,8 @@ public class Main {
                             System.out.println("Stop");
                          }
                          else{                                      //beh pwm
-                                 
-                                                            
-                            if (valuePot < 199){
+                               
+                             if (valuePot < 199){
                                 pwmPot.setDuty(pwmPart);
                              } else if (valuePot < 399){
                                 pwmPot.setDuty(pwmPart*2);
