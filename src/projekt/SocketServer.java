@@ -115,7 +115,7 @@ public class SocketServer {
         ss.setPort(1000);
 
         rm = new Projekt();
-        rm.inicializace()
+        rm.inicializace();
         
         ss.runServer();
 
