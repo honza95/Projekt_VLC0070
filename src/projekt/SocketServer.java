@@ -190,11 +190,11 @@ public class SocketServer {
     	private void inicializace(){
     		onOffButton = new GPIO(51);
     		onOffButton.exportPin();
-    		onOffButton.setDirection(GPIO.setDirection(GPIO.GPIO_DIRECTION.IN);
+    		onOffButton.setDirection(GPIO.GPIO_DIRECTION.IN);
     		
     		startStopButton = new GPIO (22);
     		startStopButton.exportPin();
-    		startStopButton.setDirection(GPIO.setDirection(GPIO.GPIO_DIRECTION.IN);
+    		startStopButton.setDirection(GPIO.GPIO_DIRECTION.IN);
     		
     		ledOnOff = new GPIO(66);           
             ledOnOff.exportPin();
