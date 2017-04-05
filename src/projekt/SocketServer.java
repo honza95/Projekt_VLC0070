@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * @author Jarek
  */
 public class SocketServer {
- 
+	 
     private int port;
     private final ArrayList<Client> clients;
     private ServerSocket serverSocket;
@@ -142,7 +142,7 @@ public class SocketServer {
         }
     }
 
-    class Task extends TimerTask {
+    class CntrlTask extends TimerTask {
     	// run is a abstract method that defines task performed at scheduled time.
         @Override
         public void run() {
@@ -164,9 +164,8 @@ public class SocketServer {
     }
 
     public static class Projekt{
-    	public Projekt (){}
-    	
-    	/Konstanty
+    	      	
+    	//Konstanty
     	private GPIO onOffButton;
     	private GPIO startStopButton;
     	private GPIO ledOnOff;
@@ -177,10 +176,11 @@ public class SocketServer {
     	
     	private PWM pwmPot;
     	
-    	private static final boolean stavOnOff = false;
-    	private static final boolean stavBeh = false;
-    	private static final boolean valueOnOff;
-    	private static final boolean valueBeh;
+    	private boolean stavOnOff = false;
+    	private boolean stavBeh = false;
+    	private boolean valueOnOff = false;
+    	private boolean valueBeh = false;
+        private int valuePot;
     	
     	private static final int pwmPeriod = 10000000;
     	private int pwmPart = pwmPeriod/10;
@@ -188,15 +188,15 @@ public class SocketServer {
     	private long pwmDuty;
     	
     	private void inicializace(){
-    		onOffButton = new GPIO(51);
-    		onOffButton.exportPin();
-    		onOffButton.setDirection(GPIO.GPIO_DIRECTION.IN);
+            onOffButton = new GPIO(51);
+            onOffButton.exportPin();
+            onOffButton.setDirection(GPIO.GPIO_DIRECTION.IN);
     		
-    		startStopButton = new GPIO (22);
-    		startStopButton.exportPin();
-    		startStopButton.setDirection(GPIO.GPIO_DIRECTION.IN);
+            startStopButton = new GPIO (22);
+            startStopButton.exportPin();
+            startStopButton.setDirection(GPIO.GPIO_DIRECTION.IN);
     		
-    		ledOnOff = new GPIO(66);           
+            ledOnOff = new GPIO(66);           
             ledOnOff.exportPin();
             ledOnOff.setDirection(GPIO.GPIO_DIRECTION.OUT);
             
@@ -212,38 +212,38 @@ public class SocketServer {
             pwmPot.enablePWM();
             pwmPot.enablePin();
             pwmPot.setRun(0);
-            pwmPot.setPeriod(pwmPeriod)
+            pwmPot.setPeriod(pwmPeriod);
             pwmPot.setPolarity(0);
     	}
     	    	
     	private void rizeni (){
     		while (stavOnOff == false){
     			onOffButton.waitForValue(1, 50); // Cekani na nabeznou hranu Zapnutí vypnutí
-                onOffButton.waitForValue(0, 50); // cekani na pusteni tlacitka
+                        onOffButton.waitForValue(0, 50); // cekani na pusteni tlacitka
                 
     			zapinani();
     			while (stavOnOff == true){            
-                    valueOnOff = toBolean(onOffButton.getValue()); 
-                
-                    if (valueOnOff == true){           // kontrola jestli uživatel nevypnul pristroj   
-                        onOffButton.waitForValue(0, 50); 
-                        stavOnOff = false;            //když je tlačitko zmacknute dojde ke zmene stavu
+                            valueOnOff = toBoolean(onOffButton.getValue()); 
+                                            
+                            if (valueOnOff == true){           // kontrola jestli uživatel nevypnul pristroj   
+                                onOffButton.waitForValue(0, 50); 
+                                stavOnOff = false;            //když je tlačitko zmacknute dojde ke zmene stavu
                         
-                        vypinani();                        
-                    }            
-                    else {
-                        valueBeh = toBoolean(startStopButton.getValue());
+                                vypinani();                        
+                            }            
+                            else {
+                                valueBeh = toBoolean(startStopButton.getValue());
                     
-                        if (stavBeh == true){
+                                if (stavBeh == true){
                             if (valueBeh == true){
                                 startStopButton.waitForValue(0, 50);   //cekani na jeho pusteni aby se neprovadelo
-                                stavBeh = false;                       //stop
+                                stavBeh = false;
                                 pwmPot.setRun(0);
                                 System.out.println("Stop");
                              }
                              else{                                      //beh pwm
                                  if (valuePot < 199){
-                                    pwmDuty = pwmPart
+                                    pwmDuty = pwmPart;
                                  } else if (valuePot < 399){
                                     pwmDuty = pwmPart*2;
                                  } else if (valuePot < 599){
@@ -312,14 +312,14 @@ public class SocketServer {
             System.out.println("Vypnuto");
     	}
     	
-    	private void data (){
-    		ByteArrayOutputStream bytestr = new ByteArrayOutputStream();
+    	private byte[] data() throws IOException{
+            ByteArrayOutputStream bytestr = new ByteArrayOutputStream();
             DataOutputStream dataOut = new DataOutputStream(bytestr);
             
             dataOut.writeBoolean(stavOnOff);
             dataOut.writeBoolean(stavBeh);
             
-            dataOut.writeInt((int)pwmDuty)
+            dataOut.writeInt((int)pwmDuty);
             
             return bytestr.toByteArray();
     	}
